@@ -31,14 +31,25 @@ jobs:
     <<: *default_image
     environment:
       GITHUB_REPONAME: rent-bot-nginx
+    timeout: 1000
     steps:
-      - <<: *attach_workspace
+      - checkout
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "VERSION" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
 
       - run:
           name: Patching version
           command: bash .circleci/scripts/patch_version.sh
 
-      # Persist VERSION and package.json files on CircleCI context to relay version number for next steps
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "VERSION" }}
+
+      # Persist VERSION file on CircleCI context to relay version number for next steps
       - persist_to_workspace:
           root: ~/repo
           paths:
