@@ -2,8 +2,6 @@
 set -e # ensure that this script will return a non-0 status code if any of rhe commands fail
 set -o pipefail # ensure that this script will return a non-0 status code if any of rhe commands fail
 
-VERSION=$1
-
 cat << EOF > service.yaml
 
 ---
@@ -72,5 +70,4 @@ spec:
             memory: 200Mi
 
 EOF
-cat service.yaml
 kubectl apply -f service.yaml

@@ -81,7 +81,6 @@ jobs:
 
     steps:
       - <<: *attach_workspace
-      - run: ls -la
       - run:
           name: Deploy
           command: |
