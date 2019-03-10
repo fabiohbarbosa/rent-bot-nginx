@@ -38,22 +38,11 @@ jobs:
           command: apk add git --update
 
       - checkout
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "VERSION" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
 
       - run:
           name: Patching version
           command: bash .circleci/scripts/patch_version.sh
-
-      - save_cache:
-          paths:
-            - node_modules
-          key: v1-dependencies-{{ checksum "VERSION" }}
-
-      # Persist VERSION file on CircleCI context to relay version number for next steps
+          
       - <<: *persist_to_workspace
 
   docker_build:

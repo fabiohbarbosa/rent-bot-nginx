@@ -2,6 +2,17 @@
 set -e # ensure that this script will return a non-0 status code if any of rhe commands fail
 set -o pipefail # ensure that this script will return a non-0 status code if any of rhe commands fail
 
+# TODO remove after tests
+echo '##################'
+echo $GITHUB_USER
+echo $GITHUB_TOKEN
+echo $GITHUB_REPONAME
+echo '##################'
+
+GITHUB_USER=fabiohbarbosa
+GITHUB_TOKEN=9d6dc3737f62625a6ca66ed952c380437594e1f4
+GITHUB_REPONAME=rent-bot-nginx
+
 SCRIPTS_PATH=.circleci/scripts
 
 echo "Configure git to push tag and increase project version"
@@ -22,14 +33,9 @@ bash ${SCRIPTS_PATH}/version.sh
 
 echo "Commit changes"
 VERSION=$(head -n 1 VERSION)
-echo "#git_status before commit"
-git status && cat VERSION && echo "#########################"
-git commit -am "[skip ci] prepare release ${GITHUB_REPONAME}-${VERSION}"
-echo "#git_status after commit"
-git status && cat VERSION && echo "#########################"
+git add VERSION
+
+git commit -m "[skip ci] prepare release ${GITHUB_REPONAME}-${VERSION}"
 
 echo "Push changes"
 git push circleci master
-
-echo "#git_status after push"
-git status && cat VERSION && echo "#########################"
