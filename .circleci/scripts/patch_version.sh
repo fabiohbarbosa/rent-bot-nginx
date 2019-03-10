@@ -2,17 +2,6 @@
 set -e # ensure that this script will return a non-0 status code if any of rhe commands fail
 set -o pipefail # ensure that this script will return a non-0 status code if any of rhe commands fail
 
-# TODO remove after tests
-echo '##################'
-echo $GITHUB_USER
-echo $GITHUB_TOKEN
-echo $GITHUB_REPONAME
-echo '##################'
-
-GITHUB_USER=fabiohbarbosa
-GITHUB_TOKEN=9d6dc3737f62625a6ca66ed952c380437594e1f4
-GITHUB_REPONAME=rent-bot-nginx
-
 SCRIPTS_PATH=.circleci/scripts
 
 echo "Configure git to push tag and increase project version"
