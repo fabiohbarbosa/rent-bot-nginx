@@ -1,0 +1,126 @@
+version: 2
+
+working_directory: &working_directory
+  working_directory: ~/repo
+
+persist_to_workspace: &persist_to_workspace
+  persist_to_workspace:
+    root: ~/repo
+    paths: ./**
+
+default_image: &default_image
+  docker:
+    - image: alpine
+
+gcp_image: &gcp_image
+  docker:
+    - image: google/cloud-sdk
+
+attach_workspace: &attach_workspace
+  attach_workspace:
+    at: ~/repo
+
+only_master: &only_master
+  branches:
+    only:
+      - master
+
+jobs:
+  patch_version:
+    <<: *working_directory
+    <<: *default_image
+    environment:
+      GITHUB_REPONAME: rent-bot-nginx
+    steps:
+      - <<: *attach_workspace
+
+      - run:
+          name: Patching version
+          command: bash .circleci/scripts/patch_version.sh
+
+      # Persist VERSION and package.json files on CircleCI context to relay version number for next steps
+      - persist_to_workspace:
+          root: ~/repo
+          paths:
+            - VERSION
+
+  docker_build:
+    <<: *working_directory
+    <<: *gcp_image
+    environment:
+      CLOUD: rent-bot-226823
+      GROUP: frontend
+      SERVICENAME: rent-bot-nginx
+    steps:
+      - <<: *attach_workspace
+
+      # Enabling DIND support
+      - setup_remote_docker:
+         docker_layer_caching: true
+
+      - run:
+          name: Building application docker image
+          command: bash .circleci/scripts/build.sh
+
+  deploy:
+    <<: *working_directory
+    <<: *gcp_image
+    environment:
+      CLOUD: rent-bot-226823
+      CLUSTER: rent-bot
+      CLUSTER_REGION: europe-west1
+      CLUSTER_ZONE: europe-west1-d
+      REPLICAS: 1
+      GROUP: frontend
+      SERVICENAME: rent-bot-nginx
+      HEALTHCHECK: /healthcheck
+
+      PORT: 8080
+      NODE_PORT: 30002
+
+      ENVIRONMENT: prod
+
+    steps:
+      - <<: *attach_workspace
+      - run:
+          name: Deploy
+          command: |
+            bash .circleci/scripts/deploy.sh
+
+  healthcheck:
+    <<: *default_image
+    environment:
+      ENV_URL: http://homerentals.ddnsgeek.com
+      HEALTHCHECK: /healthcheck
+    steps:
+      - run:
+          name: Healthcheck
+          command: |
+            bash .circleci/scripts/healthcheck.sh
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - patch_version:
+          context: rent-bot
+          filters:
+            <<: *only_master
+      - docker_build:
+          context: rent-bot
+          requires:
+            - patch_version
+          filters:
+            <<: *only_master
+      - deploy:
+          context: rent-bot
+          requires:
+            - docker_build
+          filters:
+            <<: *only_master
+      - healthcheck:
+          context: rent-bot
+          requires:
+            - deploy
+          filters:
+            <<: *only_master
