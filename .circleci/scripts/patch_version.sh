@@ -23,13 +23,13 @@ bash ${SCRIPTS_PATH}/version.sh
 echo "Commit changes"
 VERSION=$(head -n 1 VERSION)
 echo "#git_status before commit"
-git status
+git status && cat VERSION && echo "#########################"
 git commit -am "[skip ci] prepare release ${GITHUB_REPONAME}-${VERSION}"
 echo "#git_status after commit"
-git status
+git status && cat VERSION && echo "#########################"
 
 echo "Push changes"
 git push circleci master
 
 echo "#git_status after push"
-git status
+git status && cat VERSION && echo "#########################"
