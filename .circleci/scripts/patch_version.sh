@@ -27,4 +27,7 @@ git add VERSION
 git commit -m "[skip ci] prepare release ${GITHUB_REPONAME}-${VERSION}"
 
 echo "Push changes"
+echo "##############"
+cat VERSION
 git push circleci master
+echo "##############"

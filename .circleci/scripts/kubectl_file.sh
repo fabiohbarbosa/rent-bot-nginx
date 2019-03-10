@@ -72,4 +72,5 @@ spec:
             memory: 200Mi
 
 EOF
+cat service.yaml
 kubectl apply -f service.yaml

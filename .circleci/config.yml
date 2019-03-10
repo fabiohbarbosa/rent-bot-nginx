@@ -42,7 +42,7 @@ jobs:
       - run:
           name: Patching version
           command: bash .circleci/scripts/patch_version.sh
-          
+
       - <<: *persist_to_workspace
 
   docker_build:
@@ -83,6 +83,7 @@ jobs:
 
     steps:
       - <<: *attach_workspace
+      - run: ls -la
       - run:
           name: Deploy
           command: |
