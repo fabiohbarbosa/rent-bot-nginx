@@ -54,10 +54,7 @@ jobs:
           key: v1-dependencies-{{ checksum "VERSION" }}
 
       # Persist VERSION file on CircleCI context to relay version number for next steps
-      - persist_to_workspace:
-          root: ~/repo
-          paths:
-            - VERSION
+      - <<: *persist_to_workspace
 
   docker_build:
     <<: *working_directory

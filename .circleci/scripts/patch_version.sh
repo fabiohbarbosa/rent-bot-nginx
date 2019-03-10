@@ -4,8 +4,6 @@ set -o pipefail # ensure that this script will return a non-0 status code if any
 
 SCRIPTS_PATH=.circleci/scripts
 
-apk add git --update
-
 echo "Configure git to push tag and increase project version"
 rm -rf ${HOME}/.gitconfig
 git config --global push.default simple
@@ -21,6 +19,11 @@ git pull circleci master
 
 echo "Save version in VERSION file"
 bash ${SCRIPTS_PATH}/version.sh
+
+echo "Commit changes"
+VERSION=$(head -n 1 VERSION)
+git add VERSION
+git commit -m "[skip ci] prepare release ${GITHUB_REPONAME}-${VERSION}"
 
 echo "Push changes"
 git push circleci master --tags
