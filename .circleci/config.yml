@@ -10,7 +10,7 @@ persist_to_workspace: &persist_to_workspace
 
 default_image: &default_image
   docker:
-    - image: alpine
+    - image: frolvlad/alpine-bash
 
 gcp_image: &gcp_image
   docker:
