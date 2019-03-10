@@ -22,8 +22,12 @@ bash ${SCRIPTS_PATH}/version.sh
 
 echo "Commit changes"
 VERSION=$(head -n 1 VERSION)
+git status
 git add VERSION
+git status
 git commit -m "[skip ci] prepare release ${GITHUB_REPONAME}-${VERSION}"
+git status
 
 echo "Push changes"
 git push circleci master --tags
+git status

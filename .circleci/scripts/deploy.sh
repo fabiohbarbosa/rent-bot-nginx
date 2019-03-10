@@ -16,9 +16,9 @@ gcloud config set container/use_client_certificate True
 gcloud container clusters get-credentials ${CLUSTER} --zone ${CLUSTER_ZONE} --project ${CLOUD}
 
 # Step 3
-echo "Create kubernetes deploy file"
+echo "Create kubernetes deploy file for version ${VERSION}"
 bash ${SCRIPTS_PATH}/kubectl_file.sh
 
 # Step 4
-echo "Kubernetes deploy"
+echo "Deploy into the kubernetes the version ${VERSION}"
 kubectl apply -f service.yaml
