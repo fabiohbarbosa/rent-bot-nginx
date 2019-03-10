@@ -10,7 +10,7 @@ persist_to_workspace: &persist_to_workspace
 
 default_image: &default_image
   docker:
-    - image: frolvlad/alpine-bash
+    - image: ubuntu
 
 gcp_image: &gcp_image
   docker:
@@ -33,9 +33,9 @@ jobs:
       GITHUB_REPONAME: rent-bot-nginx
     timeout: 1000
     steps:
-      - run:
-          name: Install git
-          command: apk add git --update
+      # - run:
+      #     name: Install git
+      #     command: apk add git --update
 
       - checkout
 
@@ -108,21 +108,21 @@ workflows:
           context: rent-bot
           filters:
             <<: *only_master
-      - docker_build:
-          context: rent-bot
-          requires:
-            - patch_version
-          filters:
-            <<: *only_master
-      - deploy:
-          context: rent-bot
-          requires:
-            - docker_build
-          filters:
-            <<: *only_master
-      - healthcheck:
-          context: rent-bot
-          requires:
-            - deploy
-          filters:
-            <<: *only_master
+      # - docker_build:
+      #     context: rent-bot
+      #     requires:
+      #       - patch_version
+      #     filters:
+      #       <<: *only_master
+      # - deploy:
+      #     context: rent-bot
+      #     requires:
+      #       - docker_build
+      #     filters:
+      #       <<: *only_master
+      # - healthcheck:
+      #     context: rent-bot
+      #     requires:
+      #       - deploy
+      #     filters:
+      #       <<: *only_master
