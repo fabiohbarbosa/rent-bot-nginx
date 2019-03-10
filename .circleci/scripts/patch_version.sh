@@ -29,7 +29,7 @@ echo "#git_status after commit"
 git status
 
 echo "Push changes"
-git push circleci master --tags
+git push circleci master
 
 echo "#git_status after push"
 git status
