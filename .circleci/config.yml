@@ -8,9 +8,10 @@ persist_to_workspace: &persist_to_workspace
     root: ~/repo
     paths: ./**
 
-default_image: &default_image
-  docker:
-    - image: alpine/git
+install_bash: &install_bash
+  run:
+    name: Install git
+    command: apk add bash --update
 
 gcp_image: &gcp_image
   docker:
@@ -28,17 +29,14 @@ only_master: &only_master
 jobs:
   patch_version:
     <<: *working_directory
-    <<: *default_image
+    docker:
+      - image: alpine/git
     environment:
       GITHUB_REPONAME: rent-bot-nginx
     timeout: 1000
     steps:
-      - run:
-          name: Install git
-          command: apk add bash --update
-
       - checkout
-
+      - <<: *install_bash
       - run:
           name: Patching version
           command: bash .circleci/scripts/patch_version.sh
@@ -90,11 +88,13 @@ jobs:
             bash .circleci/scripts/deploy.sh
 
   healthcheck:
-    <<: *default_image
+    docker:
+      - image: alpine/git
     environment:
       ENV_URL: http://homerentals.ddnsgeek.com
       HEALTHCHECK: /healthcheck
     steps:
+      - <<: *install_bash
       - run:
           name: Healthcheck
           command: |
@@ -108,21 +108,21 @@ workflows:
           context: rent-bot
           filters:
             <<: *only_master
-      # - docker_build:
-      #     context: rent-bot
-      #     requires:
-      #       - patch_version
-      #     filters:
-      #       <<: *only_master
-      # - deploy:
-      #     context: rent-bot
-      #     requires:
-      #       - docker_build
-      #     filters:
-      #       <<: *only_master
-      # - healthcheck:
-      #     context: rent-bot
-      #     requires:
-      #       - deploy
-      #     filters:
-      #       <<: *only_master
+      - docker_build:
+          context: rent-bot
+          requires:
+            - patch_version
+          filters:
+            <<: *only_master
+      - deploy:
+          context: rent-bot
+          requires:
+            - docker_build
+          filters:
+            <<: *only_master
+      - healthcheck:
+          context: rent-bot
+          requires:
+            - deploy
+          filters:
+            <<: *only_master
