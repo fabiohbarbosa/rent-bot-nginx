@@ -89,6 +89,7 @@ jobs:
   healthcheck:
     docker:
       - image: alpine
+    <<: *working_directory
     environment:
       ENV_URL: http://homerentals.ddnsgeek.com
       HEALTHCHECK: /healthcheck
