@@ -92,7 +92,7 @@ jobs:
     <<: *working_directory
     environment:
       ENV_URL: http://homerentals.ddnsgeek.com
-      HEALTHCHECK: /healthcheck
+      HEALTHCHECK: /api/healthcheck
     steps:
       - <<: *install_bash
       - <<: *attach_workspace
