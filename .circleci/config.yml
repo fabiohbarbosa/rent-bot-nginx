@@ -86,21 +86,6 @@ jobs:
           command: |
             bash .circleci/scripts/deploy.sh
 
-  healthcheck:
-    docker:
-      - image: alpine
-    <<: *working_directory
-    environment:
-      ENV_URL: http://homerentals.ddnsgeek.com
-      HEALTHCHECK: /api/healthcheck
-    steps:
-      - <<: *install_bash
-      - <<: *attach_workspace
-      - run:
-          name: Healthcheck
-          command: |
-            bash .circleci/scripts/healthcheck.sh
-
 workflows:
   version: 2
   build_and_deploy:
@@ -119,11 +104,5 @@ workflows:
           context: rent-bot
           requires:
             - docker_build
-          filters:
-            <<: *only_master
-      - healthcheck:
-          context: rent-bot
-          requires:
-            - deploy
           filters:
             <<: *only_master
