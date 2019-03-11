@@ -10,7 +10,7 @@ persist_to_workspace: &persist_to_workspace
 
 install_bash: &install_bash
   run:
-    name: Install git
+    name: Install bash
     command: apk add bash --update
 
 gcp_image: &gcp_image
@@ -94,6 +94,7 @@ jobs:
       HEALTHCHECK: /healthcheck
     steps:
       - <<: *install_bash
+      - <<: *attach_workspace
       - run:
           name: Healthcheck
           command: |
