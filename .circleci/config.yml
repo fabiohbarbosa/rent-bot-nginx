@@ -10,8 +10,8 @@ persist_to_workspace: &persist_to_workspace
 
 install_bash: &install_bash
   run:
-    name: Install bash
-    command: apk add bash --update
+    name: Install bash and ca-certificates
+    command: apk add bash ca-certificates --update
 
 gcp_image: &gcp_image
   docker:
