@@ -65,9 +65,9 @@ spec:
           failureThreshold: 4
         resources:
           limits:
-            memory: 256Mi
+            memory: 128Mi
           requests:
-            memory: 256Mi
+            memory: 128Mi
 
 EOF
 kubectl apply -f service.yaml
